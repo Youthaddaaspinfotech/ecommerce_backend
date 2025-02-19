@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
+
 const schemaModal = new mongoose.Schema({
     name:{
         name:String
     },
     email:{
-        type:String
+        type:String,
+        lowecase:true
     },
     password:{
-        type:Number
+        type:String
     },
     phoneNumber:{
         type:Number
@@ -18,10 +20,10 @@ const schemaModal = new mongoose.Schema({
          default:1
     }
 
-}
-
+},
+{timestamps:true}
 
 );
-let Model = mongoose.model("userCollection",schemaModal)
+let Model = mongoose.model("userCollection",schemaModal);
 
 export default Model;
