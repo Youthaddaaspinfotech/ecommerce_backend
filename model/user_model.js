@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 const schemaModal = new mongoose.Schema({
     name:{
-        name:String
+        type:String,
+        trim:true
+  
     },
     email:{
         type:String,
