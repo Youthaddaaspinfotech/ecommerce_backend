@@ -72,7 +72,7 @@ export const login = async (req,res)=>{
 } 
 
 
-export const fetch = async (req,res)=>{
+export const userfetch = async (req,res)=>{
     try {
         let post = req.body;
         
