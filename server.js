@@ -2,7 +2,7 @@ import express from "express";
 import userRouter from "./router/user_router.js";
 import bodyParser from "body-parser";
 import  dbconnect from "./model/connection.js"
-const PORT = process.env.PORT || 5555;
+const PORT = process.env.PORT || 6666;
 dbconnect();
 const app = express();
 app.use(bodyParser.json());
