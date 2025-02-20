@@ -133,7 +133,7 @@ export const updateuser = async (req, res) => {
 
         // Ensure _id is provided
         if (!_id) {
-            return res.send({ code: 500, msg: "User ID (_id) is required." });
+            return res.status(500).json({msg: "User ID (_id) is required."})  ;
         }
 
         let rowData = await Model.findById(_id);
@@ -165,8 +165,8 @@ export const updateuser = async (req, res) => {
 
     } catch (error) {
         console.error("Update Error:", error.message || error);
-        return res.send({
-            code: 500,
+        return res.status(500).json({
+            
             msg: "user not updated",
             error: error.message || error
         });
@@ -188,9 +188,8 @@ export const deleteUser = async (req, res) => {
         // Find user by ID
         let user = await Model.findById(_id);
         if (!user) {
-            return res.send({
-                code: 500,
-                msg: "User not found."
+            return res.status(500).json
+                ({msg: "User not found."
             });
         }
 
