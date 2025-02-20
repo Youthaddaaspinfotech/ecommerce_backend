@@ -1,5 +1,5 @@
 import express from "express";
-
+import fileUpload from "express-fileupload";
 import bodyParser from "body-parser";
 import  dbconnect from "./model/connection.js"
 import userRouter from "./router/user_router.js";
@@ -10,6 +10,8 @@ dbconnect();
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}))
+
+app.use(fileUpload());
 
 app.use("/user",userRouter);
 app.use("/category",categoryRouter);

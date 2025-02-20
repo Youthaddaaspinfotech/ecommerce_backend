@@ -62,41 +62,25 @@ export const login = async (req,res)=>{
     
         const user =  await Model.findOne({ email });
         if(!user){
-         return res.status({
-             code: 500,
-             msg: "The email address you entered isn't connected to an account. Please check your credentials and try again."
-         });
+         return res.status(500).json({msg: "The email address you entered isn't connected to an account. Please check your credentials and try again." });
         }
         const isPassword = await bcrypt.compare(password, user.password);
         if(!isPassword)
         {
-            return res.status({
-                code: 500,
-                msg: "Incorrect password. Please try again."
-            });
+            return res.status(500).json({msg: "Incorrect password. Please try again."});
 
         }
 
         var payload = user.email;
         var key = Randomstring.generate();
         var token = JsonWebToken.sign(payload,key);
-        res.status(200).json({"status":user,"token":token})
-         return res.status({
-            code: 200,
-            msg: "Login successful.",
-           
-        });
-
+        res.status(200).json({"status":user,"token":token,msg: "Login successful."})
+      
             
     
     }catch(error){
         console.log(error)
-        return res.status({
-            code: 501,
-            msg: "An error occurred while processing your request.",
-           
-            
-        })
+        return res.status(501).json({ msg: "An error occurred while processing your request."})
     }
  
    
