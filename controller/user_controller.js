@@ -91,8 +91,6 @@ export const login = async (req,res)=>{
 export const userfetch = async (req,res)=>{
     try {
         let post = req.body;
-        
-      
         let condition = [];
         if(post.name){
             condition.push({"name":{$regex:post.name,$options:"i"}})
@@ -102,8 +100,8 @@ export const userfetch = async (req,res)=>{
         }
         let data = await Model.find({ $and :condition});
         // console.log(data)
-        let count = await Model.countDocuments({ $and: condition });
-        return res.send({ "code": 200,"msg": "data found", "count": count, "data": data });
+      
+        return res.send(data);
     }catch(error){
         console.log(error)
         return res.send({ "code": 500, "msg": "data not found", "error": error });
