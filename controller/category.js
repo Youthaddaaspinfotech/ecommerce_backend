@@ -1,22 +1,27 @@
 import  categorySchemaModel from "../model/category_model.js";
 import utility from "../core/utility.js"
 
+
 export const saveCategory = async (req, res) => {
             
     // console.log(req.files)// file ke data ko recive karne ke liye use hota hai 
-    try {
+  
         const { caticon} = req.files;  // Extract category name
         // console.log(caticon);    
         // Check if a file is uploaded
         let CategorySchemaModel ;
-        let catImg;
-        if (req.files && req.files.caticon) {
-             catImg = await utility.fileUploadData(req.files.caticon, "categoryicon");
-        }
        
+        if (req.files && req.files.caticon) {
+           var  catImg = await utility.fileUploadData(req.files.caticon, "categoryicon");
+        }
+       else{
+            var catImg = "";
+            var parent_id = req.body.categoryId;
+       }
+       try {
 
         CategorySchemaModel =  new categorySchemaModel(
-          {...req.body,"caticon":catImg}
+          {...req.body,"caticon":catImg,parent_id:parent_id}
         )
            
 
@@ -53,26 +58,65 @@ export const  getCategory = async(req,res)=>{
 
 
 export const updateCategory = async (req,res)=>{
-      try{
-        const {_id,caticon , catname} = req.body;
-       
-        let rowdata = await categorySchemaModel.findById(_id);
-        if(!rowdata){
-            return res.status(404).json({ "sms": "Category not found" });
-        }
-        // Only update the fields that are passed in the request
-       if(catname) rowdata.catname  = catname;
-       if(caticon) rowdata.caticon  = caticon;
-  // Save the updated  document
-  await rowdata.save();
+     
+  var category = await categorySchemaModel.findById(req.body._id);
+  
+  var caticonName =  category.caticon;
 
-  return res.status(200).json({"msg":"Category updated successfully"})
-      }catch(error){
+  if(req.files && req.files.caticon){
+    var imgpath = await utility.fileUploadData(req.files.caticon,'categoryicon')
+  }else{
+    var imgpath = "";
+  }
+    const parent_id = req.body.categoryId;
+  
+    console.log(parent_id)
+  //  try{
+  //   var update = await categorySchemaModel.findByIdAndUpdate({"_id":req.body.categoryId},
+  //     {
+  //     name:req.body.name,
+  //     caticon:req.files && req.files.caticon ? imgpath : caticonName,
+  //     status:req.body.status,
+  //     parentId:parent_id
+
+  //     },{new:true}
+  //   );
+  //   res.status(200).json({"sms":"category updated succesfull"});
+
+   
+
+  //  }catch(error){
+  //   console.log(error)
+  //   res.status(500).json({"sms":"category not updated succesfull"});
+  //  }
+
+
+
+
+  // if(req.files && req.files.photo){
+
+  //   var imgPath1 = await 
+  // }
+  //       const {_id,caticon , catname} = req.body;
        
-            console.error("Error updating category:", error);
-            res.status(500).json({ "sms": "Category not updated", "error": error.message });
+  //       let rowdata = await categorySchemaModel.findById(_id);
+  //       if(!rowdata){
+  //           return res.status(404).json({ "sms": "Category not found" });
+  //       }
+  //       // Only update the fields that are passed in the request
+  //      if(catname) rowdata.catname  = catname;
+  //      if(caticon) rowdata.caticon  = caticon;
+  // // Save the updated  document
+  // try{
+  // await rowdata.save();
+
+  // return res.status(200).json({"msg":"Category updated successfully"})
+  //     }catch(error){
+       
+  //           console.error("Error updating category:", error);
+  //           res.status(500).json({ "sms": "Category not updated", "error": error.message });
         
-      }
+  //     }
 }
 
 

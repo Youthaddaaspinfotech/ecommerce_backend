@@ -3,15 +3,28 @@ import mongoose from "mongoose";
 const category = new mongoose.Schema({
     catname:{
         type:String,
-        unique: true,
-        required: [true," category Name is required"]
-    }
-    ,
+},
+    subcatname:{
+        type:String
+    },
     caticon:{
         type:String,
         unique: true
+    },
+    parentId:{
+        type:mongoose.ObjectId,
+        ref:"categorycollections",
+        default:"000000000000000000000000"
+
+    },
+    description:{
+        type:String
+    },
+    status:{
+        type:Number,
+        default:1
     }
-})
+},{timestamps:true})
 
 const categoryModel = mongoose.model("categoryCollection",category);
 
