@@ -1,9 +1,12 @@
 import  categorySchemaModel from "../model/category_model.js";
 import utility from "../core/utility.js"
-
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url"; // ✅ Import this properly
 
 export const saveCategory = async (req, res) => {
-            
+
+ // agar subcategory add karna hai to parentid bhi dena to add ho jaye gi
     // console.log(req.files)// file ke data ko recive karne ke liye use hota hai 
   
         const { caticon} = req.files;  // Extract category name
@@ -16,12 +19,11 @@ export const saveCategory = async (req, res) => {
         }
        else{
             var catImg = "";
-            var parent_id = req.body.categoryId;
-       }
+            }
        try {
 
         CategorySchemaModel =  new categorySchemaModel(
-          {...req.body,"caticon":catImg,parent_id:parent_id}
+          {...req.body,"caticon":catImg}
         )
            
 
@@ -39,86 +41,71 @@ export const saveCategory = async (req, res) => {
 };
  
 export const  getCategory = async(req,res)=>{
-     try {
-          let post = req.query;
-          let condition = [];
-          if(post.catname){
-            condition.push({"catname": { $regex: post.catname, $options: "i" } });
-          }
-           
-          let data = await categorySchemaModel.find({$and:condition});
-           
-
-          return res.status(200).json({"data":data})        
-
-     }catch{
-        return res.status(500).json({"sms":"data  not fetch"}) 
-     }
-}
-
-
-export const updateCategory = async (req,res)=>{
-     
-  var category = await categorySchemaModel.findById(req.body._id);
-  
-  var caticonName =  category.caticon;
-
-  if(req.files && req.files.caticon){
-    var imgpath = await utility.fileUploadData(req.files.caticon,'categoryicon')
-  }else{
-    var imgpath = "";
+  try {
+    const categories = await categorySchemaModel.find({ parentId: "000000000000000000000000" });
+    const subcategories = await categorySchemaModel.find({ parentId: { $ne: "000000000000000000000000" } });
+    
+    return res.status(200).json({
+      categories,
+      subcategories,
+    });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ sms: "Data not fetched" });
   }
-    const parent_id = req.body.categoryId;
-  
-    console.log(parent_id)
-  //  try{
-  //   var update = await categorySchemaModel.findByIdAndUpdate({"_id":req.body.categoryId},
-  //     {
-  //     name:req.body.name,
-  //     caticon:req.files && req.files.caticon ? imgpath : caticonName,
-  //     status:req.body.status,
-  //     parentId:parent_id
-
-  //     },{new:true}
-  //   );
-  //   res.status(200).json({"sms":"category updated succesfull"});
-
-   
-
-  //  }catch(error){
-  //   console.log(error)
-  //   res.status(500).json({"sms":"category not updated succesfull"});
-  //  }
-
-
-
-
-  // if(req.files && req.files.photo){
-
-  //   var imgPath1 = await 
-  // }
-  //       const {_id,caticon , catname} = req.body;
-       
-  //       let rowdata = await categorySchemaModel.findById(_id);
-  //       if(!rowdata){
-  //           return res.status(404).json({ "sms": "Category not found" });
-  //       }
-  //       // Only update the fields that are passed in the request
-  //      if(catname) rowdata.catname  = catname;
-  //      if(caticon) rowdata.caticon  = caticon;
-  // // Save the updated  document
-  // try{
-  // await rowdata.save();
-
-  // return res.status(200).json({"msg":"Category updated successfully"})
-  //     }catch(error){
-       
-  //           console.error("Error updating category:", error);
-  //           res.status(500).json({ "sms": "Category not updated", "error": error.message });
-        
-  //     }
 }
 
+
+
+export const updateCategory = async(req,res)=>{
+
+  const __filename = fileURLToPath(import.meta.url); // Get current file path
+const __dirname = path.dirname(__filename); // Get directory name
+console.log("__dirname:", __dirname);
+
+  var category = await categorySchemaModel.findById({"_id":req.body.id})
+  // console.log(category);
+  var caticonname = category.caticon;
+  //  console.log(caticonname);
+  if(req.files && req.files.caticon){
+    var newpathicon = await utility.fileUploadData(req.files.caticon,"categoryicon")
+  }else{
+    var newpathicon = ""
+  }
+  const parent_id = req.body.categoryId;
+try{
+  var update = await categorySchemaModel.findByIdAndUpdate({"_id":req.body.id},{
+
+    catname:req.body.catname,
+    subcatname:req.body.subcatname,
+    caticon:req.files && req.files.caticon ? newpathicon : caticonname ,
+    status:req.body.status,
+    parentId :parent_id
+  },
+  {new:true}
+  );
+
+  if(update){
+    var imgpath = path.join(__dirname, "../public/categoryicon/",category.caticon); 
+    // console.log(imgpath)
+    
+    if(req.files && req.files.caticon){
+      
+
+     if(!(imgpath == "")){
+       fs.unlinkSync(imgpath)
+     }
+    }
+    }
+  res.status(200).json({"sms":"category update succefully"})
+     
+
+
+}catch(error){
+  console.log(error)
+  res.status(500).json({"sms":"category not update succefully"})
+}
+}
 
 export const deleteCategory = async(req,res)=>{
     try{
@@ -135,10 +122,12 @@ export const deleteCategory = async(req,res)=>{
                // cat
              await categorySchemaModel.findByIdAndDelete(_id);
 
-             return res.status(200).json({"sms":"category deleted success fully"})
+             
+
+             return res.status(200).json({"sms":"category deleted successfully"})
 
     }catch(error){
         console.log("error"+error)
-        return res.status(500).json({"sms":"category  not deleted success fully"})
+        return res.status(500).json({"sms":"category  not deleted successfully"})
     }
 }

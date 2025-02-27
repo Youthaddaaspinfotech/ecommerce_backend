@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import dbconnect from "./model/connection.js"
 import userRouter from "./router/user_router.js";
 import categoryRouter from "./router/category_router.js"
-
+import productRouter from "./router/produc_router.js";
 
 
 const PORT = process.env.PORT || 6666;
@@ -20,6 +20,7 @@ app.use(fileUpload());
 
 app.use("/user",userRouter);
 app.use("/category",categoryRouter);
+app.use("/product",productRouter);
 
 
 app.listen(PORT,()=>{

@@ -9,7 +9,7 @@ const category = new mongoose.Schema({
     },
     caticon:{
         type:String,
-        unique: true
+       
     },
     parentId:{
         type:mongoose.ObjectId,

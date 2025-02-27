@@ -15,8 +15,8 @@ utility.fileUploadData = async (data, folderName) => {
            // console.log(caticonname)
 
             let dt = Date.now(); // Unique timestamp
-            let rs = Randomstring.generate();
-         var NewImg = rs+"-"+dt+"-"+ caticonname; // Generate unique file name
+            
+         var NewImg = dt+"-"+ caticonname; // Generate unique file name
 
             let filepath = 'public/' + folderName + '/' + NewImg;
            
